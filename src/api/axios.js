@@ -55,6 +55,27 @@ export const loginUser = async (userData) => {
   }
 };
 
+// Fungsi untuk logout user
+export const logoutUser = async () => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) throw new Error("Token tidak ditemukan");
+
+    const response = await axios.post(`${apiUrl}api/logout/`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    Cookies.remove("token"); // Hapus token dari cookies
+    console.log("Logout berhasil:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Gagal logout:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 // Fungsi untuk fetch users
 export const fetchUsers = async () => {
   try {
@@ -177,7 +198,7 @@ export const fetchDataCalonKaryawan = async () => {
       throw error;
   }
 };
-// Fungsi untuk fetch data calon karyawan
+// Fungsi untuk fetch detail data calon karyawan
 export const fetchDetailCalonKaryawan = async (id) => {
   try {
       const token = Cookies.get("token"); // Gunakan Cookies.get untuk mengambil token
@@ -213,7 +234,7 @@ export const fetchDataKaryawan = async () => {
   }
 };
 
-// Fungsi untuk fetch datakaryawan
+// Fungsi untuk fetch detail datakaryawan
 export const fetchDetailKaryawan = async (id) => {
   try {
     const token = Cookies.get("token");
@@ -270,6 +291,23 @@ export const fetchDataPinjaman = async () => {
    throw error;
  }
 };
+
+export const fetchLaporanGaji = async () => {
+  try {
+    const token = Cookies.get("token"); // Gunakan Cookies.get untuk mengambil token
+    console.log("Token:", token); // Debug token
+    const response = await axios.get(`${apiUrl}api/laporan-gaji/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("API response data:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error; 
+  }
+}
 
 
 

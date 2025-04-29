@@ -12,6 +12,9 @@ const DetailCalonKaryawan = ({id}) => {
     const [error, setError] = useState(null);
 
     const apiUrl = "http://127.0.0.1:8000/";
+    const fotoCalonUrl = `${apiUrl}${dataCalonKaryawan?.photo}`; // URL gambar foto calon karyawan
+    const fotoKtp = `${apiUrl}${dataCalonKaryawan?.ktp}`; // URL ktp
+    const fotoIjazah = `${apiUrl}${dataCalonKaryawan?.ijazah}`; // URL ktp
 
     // Fetch data dari API
     useEffect(() => {
@@ -31,6 +34,35 @@ const DetailCalonKaryawan = ({id}) => {
         getUsers();
     }, [id]);
 
+    const handleKtp = () => {
+        // Membuka tab baru dan menampilkan gambar di dalamnya
+        const newTab = window.open();
+        newTab.document.write(`
+          <html>
+            <head>
+              <title>File KTP</title>
+            </head>
+            <body style="text-align: center; margin: 0;">
+              <img src="${fotoKtp}" alt="foto-calon" style="max-width: 100%; max-height: 100vh;"/>
+            </body>
+          </html>
+        `);
+    };
+    const handleIjazah = () => {
+        // Membuka tab baru dan menampilkan gambar di dalamnya
+        const newTab = window.open();
+        newTab.document.write(`
+          <html>
+            <head>
+              <title>File Ijazah</title>
+            </head>
+            <body style="text-align: center; margin: 0;">
+              <img src="${fotoIjazah}" alt="foto-calon" style="max-width: 100%; max-height: 100vh;"/>
+            </body>
+          </html>
+        `);
+    };
+
     // Jika loading, tampilkan spinner
     if (loading) {
         return (
@@ -49,56 +81,53 @@ const DetailCalonKaryawan = ({id}) => {
         <div className="flex flex-col h-screen">
             <div className="overflow-y-auto mac-scrollbar mac-scrollbar-x mac-scrollbar-y mb-20 pr-4 px-6">
                 <div className="flex gap-6 mt-5">
-                    {dataCalonKaryawan.map((candidate) => (
-                        <div key={candidate.id} className="flex items-center w-3/4 bg-[#E8E1F2] p-4 rounded-lg">
+                        <div  className="flex items-center w-3/4 bg-[#E8E1F2] p-4 rounded-lg">
                             <div className="flex-shrink-0">
                                 <img
-                                    src={`${apiUrl}${candidate.photo}`}
-                                    alt={`profile-${candidate.nama_karyawan}`}
+                                    src={fotoCalonUrl}
+                                    alt="foto-calon"
                                     className="w-40 h-40 object-cover rounded-full mx-auto"
                                 />
                             </div>
                             <div className="ml-4">
                                 <h5 className="text-lg font-semibold mb-2">
-                                    {candidate.nama_karyawan}
+                                    {dataCalonKaryawan?.nama_karyawan}
                                 </h5>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">NIK:  </span>
-                                    {candidate.nik}
+                                    {dataCalonKaryawan?.nik}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Email:  </span>
-                                    {candidate.email}
+                                    {dataCalonKaryawan?.email}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Tempat, Tanggal lahir:  </span>
-                                    {candidate.tempat_lahir}, {candidate.tanggal_lahir}
+                                    {dataCalonKaryawan?.tempat_lahir}, {dataCalonKaryawan?.tanggal_lahir}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Jenis Kelamin:  </span>
-                                    {candidate.jenis_kelamin}
+                                    {dataCalonKaryawan?.jenis_kelamin}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Agama:  </span>
-                                    {candidate.agama}
+                                    {dataCalonKaryawan?.agama}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Status:  </span> 
-                                    {candidate.status}
+                                    {dataCalonKaryawan?.status}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">Alamat:  </span>
-                                    {candidate.alamat}
+                                    {dataCalonKaryawan?.alamat}
                                 </p>
                                 <p className="text-sm font-medium">
                                     <span className="text-gray-600 text-xs">No.Telp:  </span>
-                                    {candidate.no_telephone}
+                                    {dataCalonKaryawan?.no_telephone}
                                 </p>
                             </div>
                         </div>
-                    ))}
-                    {dataCalonKaryawan.map((candidate) => (
-                        <div key={candidate.id} className="flex flex-col items-center w-1/3 bg-[#E8E1F2] p-4 rounded-lg">
+                        <div className="flex flex-col items-center w-1/3 bg-[#E8E1F2] p-4 rounded-lg">
                             <h5 className="text-lg font-semibold mb-2 mt-2">
                                 File Calon Karyawan
                             </h5>
@@ -106,16 +135,23 @@ const DetailCalonKaryawan = ({id}) => {
                                 <span className="text-gray-600 text-sm w-[90%]">
                                     File KTP:  
                                 </span>
-                                <Icon icon="majesticons:open"/>
+                                <Icon 
+                                    icon="majesticons:open"
+                                    onClick={handleKtp} 
+                                    className="cursor-pointer"
+                                />
                             </div>
                             <div className="bg-white rounded-lg h-12 flex items-center w-full mx-4 p-4 mt-4">
                                 <span className="text-gray-600 text-sm w-[90%]">
                                     File Ijazah:  
                                 </span>
-                                <Icon icon="majesticons:open"/>
+                                <Icon 
+                                    icon="majesticons:open"
+                                    onClick={handleIjazah} 
+                                    className="cursor-pointer"
+                                />
                             </div>
                         </div>
-                    ))}
                 </div>
                 <div className="bg-[#E8E1F2] h-screen w-full mt-6 rounded-lg p-4">
                     <h5 className="text-lg font-semibold mb-2 mt-2">

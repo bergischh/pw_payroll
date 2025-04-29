@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import React from "react";
 import Dashboard from "../admin/dashboard/Dashboard.jsx";
 import Users from "../admin/dashboard/Users.jsx";
@@ -9,25 +9,30 @@ import Pinjaman from "./dashboard/Pinjaman-karyawan/Pinjaman.jsx";
 import Pembayaran from "./dashboard/Pinjaman-karyawan/Pembayaran.jsx";
 import Recruitment from "./dashboard/Recruitmen.jsx";
 import DetailKaryawan from "./dashboard/DetailKaryawan.jsx";
-import PermissionRole from "./dashboard/PermissionROle.jsx";
-import PeriodePenggajian from "./dashboard/PeriodePenggajian.jsx";
-// import { useNavigate } from "react-router-dom";
-// import Cookies from "js-cookie";
+import PermissionRole from "./dashboard/PermissionRole.jsx";
+import LaporanPenggajian from "./dashboard/LaporanPenggajian.jsx";
+import { logoutUser } from "../../api/axios.js"; 
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+// import PeriodePenggajian from "./dashboard/PeriodePenggajian.jsx";
+// import Profile from "./dashboard/Profile.jsx";
+// import Kehadiran from "./dashboard/Kehadiran.jsx";
 
 const Sidebar = () => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [open, setOpen] = useState(true);
     const [activePage, setActivePage] = useState("Dashboard");
     const [openAccordion, setOpenAccordion] = useState(null); // Track which accordion is open
     const [allowDetailAccess, setAllowDetailAccess] = useState(false); // Track if DetailKaryawan access is allowed
-
-    // useEffect(() => {
-    //     const token = Cookies.get("token");
-    //     if (!token) {
-    //         navigate("/login");
-    //     }
-    // }, [navigate]); // Tambahkan `navigate` sebagai dependency
     
+    const handleLogout = async () => {
+        try {
+          await logoutUser();
+          navigate("/login"); // Arahkan ke halaman login setelah logout
+        } catch (error) {
+          alert("Logout gagal. Silakan coba lagi.");
+        }
+      };
 
     const menus = [
         { title: "Dashboard", icon: "ion:home", component: Dashboard },
@@ -53,11 +58,13 @@ const Sidebar = () => {
                 { title: "Pembayaran", icon: "fluent:payment-32-filled", component: Pembayaran },
             ],
         },
-        { title: "Laporan Penggajian", icon: "tabler:report" },
+        // { title: "Periode Penggajian", icon: "grommet-icons:money", component: PeriodePenggajian },
+        { title: "Laporan Penggajian", icon: "tabler:report", component: LaporanPenggajian },
         { title: "Recruitmen", icon: "fluent-mdl2:recruitment-management", component: Recruitment },
-        { title: "Logout", icon: "charm:sign-out" },
         { title: "Permission", icon: "tdesign:user-setting-filled", component: PermissionRole },
-        { title: "Periode Penggajian", icon: "grommet-icons:money", component: PeriodePenggajian },
+        // { title: "Kehadiran", icon: "ic:baseline-people-alt", component: Kehadiran},
+        // { title: "Profile", icon: "iconamoon:profile", component: Profile},
+        { title: "Logout", icon: "charm:sign-out",  action: handleLogout },
     ];
 
     const activeMenu = menus.find(
@@ -72,90 +79,96 @@ const Sidebar = () => {
             : activeMenu?.subMenus?.find((sub) => sub.title === activePage)?.component || activeMenu?.component;
 
     return (
-        <div className="flex">
-            <div className={`${open ? "w-72" : "w-20"} duration-300 h-screen bg-[#A996C5] relative max-h-screen`}>
-                <Icon
-                    icon="ri:arrow-left-double-line"
-                    className={`absolute cursor-pointer rounded-full right-1 mr-[-18px] top-9 bg-[#a3a3a3] text-white h-7 w-7 border ${
-                        !open && "rotate-180"
-                    }`}
-                    onClick={() => setOpen(!open)}
-                />
-                <div>
-                    <img
-                        src="./img/vector-admin.png"
-                        alt=""
-                        className={`w-16 mx-auto duration-300 mt-8 ${!open && "pt-16 w-11"}`}
+        // <div className="max-h-screen overflow-hidden">
+            <div className="flex ">
+                <div className={`${open ? "w-72" : "w-20"} duration-300 h-screen bg-[#A996C5] relative overflow-y-auto max-h-screen`}>
+                    <Icon
+                        icon="ri:arrow-left-double-line"
+                        className={`absolute cursor-pointer rounded-full right-1 mr-[-18px] top-9 bg-[#a3a3a3] text-white h-7 w-7 border ${
+                            !open && "rotate-180"
+                        }`}
+                        onClick={() => setOpen(!open)}
                     />
-                    <div className={`${!open && "border border-white w-8 mx-6 mt-5"}`}></div>
-                    <h1 className={`text-white text-center font-medium text-xl duration-300 mt-3 ${!open && "scale-0"}`}>
-                        Admin Payroll
-                    </h1>
-                    <h6 className={`text-white text-center font-medium duration-300 ${!open && "scale-0"}`}>
-                        Adminpayroll@gmail.com
-                    </h6>
-                </div>
-                <ul className={`${!open && "mt-[-85px]"} mt-5 ms-4`}>
-                    {menus.map((menu, index) => (
-                        <li key={index}>
-                            <div
-                                className={`text-white text-sm flex items-center gap-x-4 cursor-pointer py-2 rounded-md px-3 mr-5 border-white ${
-                                    menu.subMenus ? "" : activePage === menu.title ? "bg-[#87789E] border border-white" : ""
-                                }`}
-                                onClick={() => {
-                                    if (menu.subMenus) {
-                                        setOpenAccordion((prev) => (prev === menu.title ? null : menu.title)); // Toggle accordion
-                                    } else {
-                                        setActivePage(menu.title);
-                                        setOpenAccordion(null); // Tutup accordion jika berpindah menu
-                                    }
-                                }}
-                            >
-                                <Icon icon={menu.icon} className="text-2xl" />
-                                <span className={`${!open && "hidden"} origin-left duration-200`}>{menu.title}</span>
-                                {menu.subMenus && (
-                                    <Icon
-                                        icon="mdi:chevron-down"
-                                        className={`text-xl ml-auto duration-200 ${openAccordion === menu.title ? "rotate-180" : ""}`}
-                                    />
-                                )}
-                            </div>
-                            {/* Sub-menu */}
-                            {menu.subMenus && openAccordion === menu.title && (
-                                <div className="rounded-md mt-2 px-4 py-2">
-                                    <ul className="space-y-1">
-                                        {menu.subMenus.map((subMenu, subIndex) => (
-                                            <li
-                                                key={subIndex}
-                                                className={`text-sm flex items-center gap-x-4 py-2 px-2 rounded-md cursor-pointer text-white ${
-                                                    activePage === subMenu.title ? "bg-[#87789E] border border-white" : ""
-                                                }`}
-                                                onClick={() => setActivePage(subMenu.title)}
-                                            >
-                                                <Icon icon={subMenu.icon} className="text-2xl" />
-                                                {subMenu.title}
-                                            </li>
-                                        ))}
-                                    </ul>
+                    <div>
+                        <img
+                            src="./img/vector-admin.png"
+                            alt=""
+                            className={`w-16 mx-auto duration-300 mt-8 ${!open && "pt-16 w-11"}`}
+                        />
+                        <div className={`${!open && "border border-white w-8 mx-6 mt-5"}`}></div>
+                        <h1 className={`text-white text-center font-medium text-xl duration-300 mt-3 ${!open && "scale-0"}`}>
+                            Admin Payroll
+                        </h1>
+                        <h6 className={`text-white text-center font-medium duration-300 ${!open && "scale-0"}`}>
+                            Adminpayroll@gmail.com
+                        </h6>
+                    </div>
+                    <ul className={`${!open && "mt-[-85px]"} mt-5 ms-4`}>
+                        {menus.map((menu, index) => (
+                            <li key={index}>
+                                <div
+                                    className={`text-white text-sm flex items-center gap-x-4 cursor-pointer py-2 rounded-md px-3 mr-5 border-white ${
+                                        menu.subMenus ? "" : activePage === menu.title ? "bg-[#87789E] border border-white" : ""
+                                    }`}
+                                    onClick={() => {
+                                        if (menu.subMenus) {
+                                            setOpenAccordion((prev) => (prev === menu.title ? null : menu.title)); // Toggle accordion
+                                        } else {
+                                            setActivePage(menu.title);
+                                            setOpenAccordion(null); // Tutup accordion jika berpindah menu
+                                            if (menu.action) menu.action(); 
+                                        }
+                                    }}
+                                >
+                                    <Icon icon={menu.icon} className="text-2xl" />
+                                    <span className={`${!open && "hidden"} origin-left duration-200`}>{menu.title}</span>
+                                    {menu.subMenus && (
+                                        <Icon
+                                            icon="mdi:chevron-down"
+                                            className={`text-xl ml-auto duration-200 ${openAccordion === menu.title ? "rotate-180" : ""}`}
+                                        />
+                                    )}
                                 </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="py-5 pr-5 text-2xl font-semibold flex-1 bg-[#A996C5]">
-                <div
-                    className="bg-[#F8F7F7] rounded-2xl content ps-5 pt-5 pb-5 pr-4 overflow-y-hidden"
-                    style={{ height: "calc(100vh - 40px)" }}
-                >
-                    {activeComponent ? (
-                        React.createElement(activeComponent, { open }) // Render component dynamically
-                    ) : (
-                        <p className="text-center text-gray-500">Pilih menu untuk ditampilkan.</p>
-                    )}
+                                {/* Sub-menu */}
+                                {menu.subMenus && openAccordion === menu.title && (
+                                    <div className="rounded-md mt-2 px-4 py-2">
+                                        <ul className="space-y-1">
+                                            {menu.subMenus.map((subMenu, subIndex) => (
+                                                <li
+                                                    key={subIndex}
+                                                    className={`text-sm flex items-center gap-x-4 py-2 px-2 rounded-md cursor-pointer text-white ${
+                                                        activePage === subMenu.title ? "bg-[#87789E] border border-white" : ""
+                                                    }`}
+                                                    onClick={() => {
+                                                        setActivePage(subMenu.title);
+                                                        if (subMenu.action) subMenu.action(); 
+                                                    }}
+                                                >
+                                                    <Icon icon={subMenu.icon} className="text-2xl" />
+                                                    {subMenu.title}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="py-5 pr-5 text-2xl font-semibold flex-1 bg-[#A996C5]">
+                    <div
+                        className="bg-[#F8F7F7] rounded-2xl content ps-5 pt-5 pb-5 pr-4 overflow-y-hidden"
+                        style={{ height: "calc(100vh - 40px)" }}
+                    >
+                        {activeComponent ? (
+                            React.createElement(activeComponent, { open }) // Render component dynamically
+                        ) : (
+                            <p className="text-center text-gray-500">Pilih menu untuk ditampilkan.</p>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        // </div>
     );
 };
 
