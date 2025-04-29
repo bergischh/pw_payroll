@@ -1,20 +1,23 @@
+# interview/models.py
 from django.db import models
 
-class Karyawan(models.Model):
-    nama = models.CharField(max_length=100)
-    posisi = models.CharField(max_length=100)
+
+class SoalWawancara(models.Model):
+    pertanyaan = models.CharField(max_length=255)
+    baik = models.BooleanField(default=False)
+    cukup = models.BooleanField(default=False)
+    kurang = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.nama
-
-class Wawancara(models.Model):
-    karyawan = models.ForeignKey(Karyawan, on_delete=models.CASCADE)
-    tanggal = models.DateField()
-    hasil = models.TextField()
-
-    def __str__(self):
-        return f"Wawancara {self.karyawan.nama} pada {self.tanggal}"
+        return self.pertanyaan
     
+class JawabanWawancara(models.Model):
+    soal = models.ForeignKey(SoalWawancara, on_delete=models.CASCADE, related_name='jawaban')
+    calon_karyawan = models.ForeignKey('calonKaryawan', on_delete=models.CASCADE, related_name='jawaban')
+    jawaban = models.TextField()
+    penilaian = models.CharField(max_length=20, choices=[('baik', 'Baik'), ('cukup', 'Cukup'), ('kurang', 'Kurang')], null=True, blank=True)
+    tanggal_jawab = models.DateTimeField(auto_now_add=True)
 
-  
-   
+    def __str__(self):
+        return f"Jawaban dari {self.calon_karyawan} untuk {self.soal}"
+

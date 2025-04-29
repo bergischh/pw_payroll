@@ -46,7 +46,7 @@ class AdminandManagerDashboard(APIView):
             total_thr=Sum('THR'),
             total_bonus=Sum('bonus')
         )
-
+        
         jumlah_tunjangan = sum(value or 0 for value in tunjangan_totals.values())
 
         data = {
@@ -146,7 +146,7 @@ class calonKaryawanDashboard(APIView):
 
         calon_karyawan = get_object_or_404(CalonKaryawan, user=user)
         data = {
-            "nama": calon_karyawan.nama_calonKaryawan,
+            "nama": calon_karyawan.nama_karyawan,
             "email": calon_karyawan.email,
             "status_wawancara": calon_karyawan.get_status_wawancara_display(),
         }

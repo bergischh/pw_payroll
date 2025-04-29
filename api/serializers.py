@@ -12,6 +12,8 @@ from .models.slipgaji_models import SlipGaji
 from .models.transaksi_models import Transaction
 from .models.product_models import Product
 from .models.company_models import Company
+from .models.soal_models import SoalWawancara
+from .models.soal_models import JawabanWawancara
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -117,3 +119,17 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = '__all__'
+
+class SoalWawancaraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SoalWawancara
+        fields = ['id', 'pertanyaan', 'baik', 'cukup', 'kurang']
+
+class JawabanWawancaraSerializer(serializers.ModelSerializer):
+    soal = SoalWawancaraSerializer(read_only=True)  # Menampilkan detail soal
+    soal_id = serializers.PrimaryKeyRelatedField(queryset=SoalWawancara.objects.all(), source='soal', write_only=True)
+    
+    class Meta:
+        model = JawabanWawancara
+        fields = ['id', 'soal', 'soal_id', 'calon_karyawan', 'jawaban', 'penilaian', 'tanggal_jawab']
+        read_only_fields = ['id', 'tanggal_jawab']

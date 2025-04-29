@@ -14,7 +14,7 @@ from .views.slipgaji_views import SlipGajiView, SlipGajiCreate, SlipGajiUpdate, 
 from .views.transaksi_views import TransactionView, TransactionCreate, TransactionUpdate, TransactionDelete
 from .views.company import KaryawanList, ProductCreate, ProductList, ProductUpdate, ProductDelete, RecruitmentView, RecruitmentCreate, RecruitmentUpdate, RecruitmentDelete, ToggleCompanyStatus
 from .views.dashboard import AdminandManagerDashboard, KaryawanDashboard, calonKaryawanDashboard
-# from .views.soal_views import 
+from .views.soal_views import SoalWawancaraListCreateView, SoalWawancaraDetailView
 
 
 urlpatterns = [
@@ -115,4 +115,8 @@ urlpatterns = [
 
     # toggle handle recruitment
     path('toggle-openrec/<int:id>/', ToggleCompanyStatus.as_view(), name='toggle-status'),
+
+    #Soal wawancara
+    path('soal/', SoalWawancaraListCreateView.as_view(), name='soal_list_create'),      # List and create questions
+    path('soal/<int:pk>/', SoalWawancaraDetailView.as_view(), name='soal_detail'),
 ]

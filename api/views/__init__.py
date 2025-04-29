@@ -9,3 +9,4 @@ from .periode_views import PeriodeView, PeriodeCreate, PeriodeUpdate, PeriodeDel
 from .laporangaji_views import LaporanGajiView, LaporanGajiCreate, LaporanGajiUpdate, LaporanGajiDelete
 from .slipgaji_views import SlipGajiView, SlipGajiCreate, SlipGajiUpdate, SlipGajiDelete
 from .transaksi_views import TransactionView, TransactionCreate, TransactionUpdate, TransactionDelete
+from .soal_views import SoalWawancaraListCreateView, SoalWawancaraDetailView
